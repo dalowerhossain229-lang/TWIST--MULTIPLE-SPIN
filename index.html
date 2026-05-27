@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TWIST MULTIPLIER SPIN VIP</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- 🎰 ক্যাসিনো হেডার প্যানেল -->
+    <div class="header">
+        <div class="brand">
+            <div class="name">TWIST SPIN</div>
+            <div class="game">3-LAYER MULTIPLIER</div>
+        </div>
+        <div class="header-right">
+            <button class="sound-btn" id="mute-btn" onclick="toggleMute()">🔊</button>
+            <div class="balance-box">৳ <span id="user-balance">0.00</span></div>
+        </div>
+    </div>
+
+    <!-- 🎰 [৩-লেয়ার টুইস্ট রিং ক্যানভাস জোন] (পিউর স্টেক থিম মাল্টিপ্লায়ার ভাই ভাই) -->
+    <div class="twist-machine-zone">
+        <div class="twist-window-frame">
+            <div class="center-fire-badge">🔥</div>
+            <canvas id="twist-canvas" width="340" height="340"></canvas>
+        </div>
+    </div>
+
+    <!-- 🏆 ইন-লাইন লাইভ স্কোরিং মেসেজ বার -->
+    <div class="win-status-container" id="win-status-box">
+        <span id="win-text-msg">বেট সিলেক্ট করে SPIN বোতাম চাপুন ভাই, টুইস্ট হুইল অন ফায়ার!</span>
+    </div>
+
+    <!-- 🎛️ কন্ট্রোল প্যানেল এরিয়া (৳১-৳২০০০ প্লাস-মাইনাস ও SPIN বোতাম পাশাপাশি লক ভাই) -->
+    <div class="footer-controls">
+        <div class="play-section">
+            <div class="bet-selector">
+                <button class="bet-btn-nav" onclick="adjustBet('minus')">−</button>
+                <div style="text-align: center; width: 60px;">
+                    <div style="font-size: 9px; color: #aaa; font-weight: bold;">BET</div>
+                    <div style="font-size: 15px; font-weight: 900; color: #fff;" id="bet-display">৳৫০</div>
+                </div>
+                <button class="bet-btn-nav" onclick="adjustBet('plus')">+</button>
+            </div>
+
+            <button class="play-btn" id="spin-btn" onclick="handleTwistSpin()">SPIN</button>
+
+            <div class="icon-group">
+                <button class="icon-btn" id="auto-btn" onclick="toggleAuto()">🔄</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔌 [উইনগো কালার ট্রেড সিঙ্ক - ইউনিভার্সাল সকেট ইঞ্জিন লাইব্রেরি ভাই] -->
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlUserId = urlParams.get('userId') || urlParams.get('id') || urlParams.get('username') || "guest_user";
+        const urlWallet = urlParams.get('wallet') || "main";
+        
+        const SERVER_URL = window.location.origin;
+
+        const canvas = document.getElementById("twist-canvas");
+        const ctx = canvas.getContext("2d");
+
+        let balance = 0.00;
+        let currentBet = 50; 
+        let isSpinning = false; 
+        let isAuto = false;
+        let isMuted = false;
+        let autoInterval = null;
+
+        // ৩টি সুষম কনসেন্ট্রিক রিং বা টুইস্ট সার্কেল ডেটা মেমোরি ম্যাপ
+        let rings = [
+            { radius: 60, currentAngle: 0, speed: 0, targetAngle: 0, multipliers: ["1.55X", "4.85X", "7.7X", "10X"], colors: ["#2563eb", "#9333ea", "#06b6d4", "#dc2626"] }, // ইনার রিং
+            { radius: 105, currentAngle: 0, speed: 0, targetAngle: 0, multipliers: ["2.5X", "16X", "28X", "27.5X"], colors: ["#16a34a", "#ca8a04", "#ea580c", "#2563eb"] }, // মিডেল রিং
+            { radius: 150, currentAngle: 0, speed: 0, targetAngle: 0, multipliers: ["3.9X", "12.5X", "52X", "85X", "133X", "200X"], colors: ["#dc2626", "#16a34a", "#9333ea", "#ea580c", "#06b6d4", "#f1c40f"] } // আউটার রিং
+        ];
+
+        function renderTwistMachine() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const cx = canvas.width / 2;
+            const cy = canvas.height / 2;
+
+            // ৩টি প্রিমিয়াম রিং ও তাদের মাল্টিপ্লায়ার টেক্সট আর্করোটেশন ড্রয়িং ভাই ভাই
+            rings.forEach(r => {
+                const totalSegments = r.multipliers.length;
+                const segmentAngle = (Math.PI * 2) / totalSegments;
+
+                for (let i = 0; i < totalSegments; i++) {
+                    const startAng = (i * segmentAngle) + r.currentAngle;
+                    const endAng = startAng + segmentAngle;
+
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, r.radius, startAng, endAng);
+                    ctx.arc(cx, cy, r.radius - 38, endAng, startAng, true);
+                    ctx.closePath();
+
+                    ctx.fillStyle = r.colors[i % r.colors.length] + "1a"; // ট্রান্সপারেন্ট গ্লো
+                    ctx.fill();
+                    ctx.strokeStyle = "rgba(255, 255, 255, 0.08)";
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+
+                    // মাল্টিপ্লায়ার টেক্সট রেন্ডারিং পজিশন ক্যালকুলেশন
+                    const midAng = startAng + (segmentAngle / 2);
+                    const textDist = r.radius - 18;
+                    const tx = cx + Math.cos(midAng) * textDist;
+                    const ty = cy + Math.sin(midAng) * textDist;
+
+                    ctx.translate(tx, ty);
+                    ctx.rotate(midAng + Math.PI / 2);
+
+                    ctx.fillStyle = r.colors[i % r.colors.length];
+                    ctx.font = "bold 13px Arial";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    
+                    if (!isSpinning) {
+                        ctx.shadowColor = r.colors[i % r.colors.length];
+                        ctx.shadowBlur = 4;
+                    }
+                    ctx.fillText(r.multipliers[i], 0, 0);
+                    ctx.restore();
+                }
+            });
+
+            // ১২ টার ডিরেকশনে থাকা সেন্ট্রাল উইন ইন্ডিকেটর লাইন বা সুতো ভাই ভাই
+            ctx.strokeStyle = "#ff0055";
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - 35);
+            ctx.lineTo(cx, cy - 160);
+            ctx.stroke();
+
+            // ইন্ডিকেটর অ্যারো বা তীর হেড
+            ctx.fillStyle = "#ff0055";
+            ctx.beginPath();
+            ctx.moveTo(cx - 8, cy - 150);
+            ctx.lineTo(cx + 8, cy - 150);
+            ctx.lineTo(cx, cy - 162);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        // 🧠 [৩-লেয়ার ইন্ডিপেন্ডেন্ট রিং টুইস্টিং এনিমেশন লুপ ইঞ্জিন ভাই ভাই]
+        function updateTwistAnimation() {
+            let stillSpinning = false;
+
+            rings.forEach(r => {
+                if (r.speed > 0.005) {
+                    r.currentAngle += r.speed;
+                    r.speed *= 0.955; // স্মুথ ঘর্ষণ ফ্রিকশন ব্রেক চাবি
+                    stillSpinning = true;
+                } else if (r.speed > 0) {
+                    r.speed = 0;
+                    r.currentAngle = r.targetAngle;
+                    playAudio('click'); // রিল লক হওয়ার খুটখুট বিট ভাই ভাই
+                }
+            });
+
+            renderTwistMachine();
+
+            if (stillSpinning) {
+                requestAnimationFrame(updateTwistAnimation);
+            } else {
+                isSpinning = false;
+                if (!isAuto) document.getElementById("spin-btn").disabled = false;
+            }
+        }
+
+        if (typeof io !== 'undefined') {
+            const socket = io();
+            socket.on("balanceUpdate", (data) => {
+                if (data && data.username === urlUserId) {
+                    if (window.parent) window.parent.postMessage({ action: "refresh_wallet" }, "*");
+                    fetchLiveBalance();
+                }
+            });
+        }
+
+        async function fetchLiveBalance() {
+            try {
+                const response = await fetch(`${SERVER_URL}/api/twist-balance?userId=${urlUserId}&wallet=${urlWallet}`);
+                const data = await response.json();
+                if (data && data.success) {
+                    balance = parseFloat(data.balance);
+                    document.getElementById("user-balance").innerText = balance.toFixed(2);
+                }
+            } catch (e) { console.error("Balance synchronization issue"); }
+        }
+
+        window.onload = () => {
+            if (window.parent) window.parent.postMessage({ action: "refresh_wallet" }, "*");
+            fetchLiveBalance();
+            renderTwistMachine();
+        };
+
+        function adjustBet(action) {
+            if (isSpinning) return;
+            if (action === 'minus' && currentBet > 1) {
+                if (currentBet <= 10) currentBet -= 1;
+                else if (currentBet <= 100) currentBet -= 10;
+                else currentBet -= 50;
+            }
+            if (action === 'plus' && currentBet < 2000) {
+                if (currentBet < 10) currentBet += 1;
+                else if (currentBet < 100) currentBet += 10;
+                else currentBet += 50;
+            }
+            if (currentBet < 1) currentBet = 1;
+            if (currentBet > 2000) currentBet = 2000;
+            
+            document.getElementById("bet-display").innerText = `৳${currentBet}`;
+            playAudio('click');
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById("mute-btn").innerText = isMuted ? "🔇" : "🔊";
+            document.getElementById("mute-btn").classList.toggle("muted-active", isMuted);
+        }
+
+                function toggleAuto() {
+            isAuto = !isAuto;
+            document.getElementById("auto-btn").classList.toggle("active", isAuto);
+            if (isAuto && !isSpinning) handleTwistSpin();
+            playAudio('click');
+        }
+
+        async function handleTwistSpin() {
+            if (isSpinning) return;
+
+            document.getElementById("win-status-box").className = "win-status-container";
+            document.getElementById("win-text-msg").innerText = "🔮 ৩টি রিং তীব্র গতিতে টুইস্ট খাচ্ছে...";
+
+            isSpinning = true;
+            document.getElementById("spin-btn").disabled = true;
+            
+            playAudio('click');
+            playAudio('spin'); // 🚀 চাকা ওড়ার কড়া ক্যাসিনো spin2.mp3 সাউন্ড ফায়ার লক ভাই!
+
+            // ৩টি রিংকে আলাদা আলাদা র্যান্ডম স্পিডে ঘুরানো শুরু ভাই ভাই
+            rings[0].speed = 0.3 + (Math.random() * 0.2); // ইনার রিং
+            rings[1].speed = 0.4 + (Math.random() * 0.2); // মিডেল রিং
+            rings[2].speed = 0.5 + (Math.random() * 0.2); // আউটার রিং
+            
+            requestAnimationFrame(updateTwistAnimation);
+
+            try {
+                const response = await fetch(`${SERVER_URL}/api/twist-spin`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: urlUserId,
+                        amount: parseFloat(currentBet),
+                        wallet: urlWallet
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data && data.success === true) {
+                    balance = parseFloat(data.balance);
+                    if (window.parent) window.parent.postMessage({ action: "refresh_wallet" }, "*");
+                    if (window.top) window.top.postMessage({ action: "refresh_wallet" }, "*");
+
+                    // ৩ সেকেন্ডের থ্রিল স্পিন শেষে ৩টি চাকা অফিশিয়াল টার্গেট কোণে এসে ব্রেক চাপবে ভাই ভাই
+                    setTimeout(() => {
+                        // সার্ভার থেকে আসা রেডিয়ান টার্গেট এলাইনমেন্ট লক ভাই ভাই
+                        rings[0].targetAngle = data.innerAngle;
+                        rings[1].targetAngle = data.middleAngle;
+                        rings[2].targetAngle = data.outerAngle;
+
+                        // এনিমেশন স্টপ লকিং ফোর্স বুস্টার ভাই ভাই
+                        rings.forEach(r => {
+                            r.speed = 0.05; // ব্রেক ফেজ অন
+                        });
+
+                        setTimeout(() => {
+                            showFinalReward(data.status, data.winAmount, data.totalMultiplier);
+                        }, 800);
+
+                    }, 3000);
+
+                } else {
+                    rings.forEach(r => r.speed = 0.01);
+                    alert(data.message || "❌ Insufficient Balance! Please Recharge.");
+                    stopTwistState();
+                }
+            } catch (err) {
+                rings.forEach(r => r.speed = 0.01);
+                alert("⚠️ সেশন আউট! আবার SPIN বোতাম চাপুন ভাই ভাই।");
+                stopTwistState();
+            }
+        }
+
+        function showFinalReward(status, winAmount, totalMultiplier) {
+            const msgBox = document.getElementById("win-status-box");
+            const textMsg = document.getElementById("win-text-msg");
+
+            if (status === "win") {
+                // 🎵 বাজি জিতে মেগা মাল্টিপ্লায়ার বাস্ট হওয়ামাত্রই win2.mp3 রাজকীয় সাউন্ড ফায়ার লক ভাই!
+                playAudio('win');
+                msgBox.className = "win-status-container win-glow-bar";
+                textMsg.innerText = `🏆 মেগা উইন!! রিং এলাইনমেন্ট মিলে হিট হয়েছে: ${totalMultiplier}X জ্যাকপট! (৳${winAmount})`;
+            } else {
+                msgBox.className = "win-status-container lose-glow-bar";
+                textMsg.innerText = "❌ ওহ! এই রাউন্ডে রিং কম্বিনেশন মেলেনি। আবার ট্রাই করুন ভাই ভাই!";
+            }
+
+            document.getElementById("user-balance").innerText = balance.toFixed(2);
+            stopTwistState();
+
+            if (isAuto) {
+                autoInterval = setTimeout(() => {
+                    if (isAuto) handleTwistSpin();
+                }, 2000);
+            }
+        }
+
+        function stopTwistState() {
+            isSpinning = false;
+            document.getElementById("spin-btn").disabled = false;
+            if (!isAuto && autoInterval) clearTimeout(autoInterval);
+        }
+
+        // 🎯 [আপনার রিকোয়ারমেন্ট অনুযায়ী ৩টি ওরিজিনাল প্রিমিয়াম সাউন্ড ট্র্যাক লক ভাই ভাই]
+        const slotSounds = {
+            click: new Audio('click2.mp3'),
+            spin: new Audio('spin2.mp3'),
+            win: new Audio('win2.mp3')
+        };
+        Object.values(slotSounds).forEach(s => s.load());
+
+        function playAudio(type) { 
+            if (isMuted) return; // 🔇 সাউন্ড অফ থাকলে কোনো অডিও প্লে হবে না ভাই ভাই!
+            try { 
+                slotSounds[type].currentTime = 0; 
+                slotSounds[type].play(); 
+            } catch(e){} 
+        }
+    </script>
+</body>
+</html>
+
