@@ -25,7 +25,7 @@ app.use((req, res, next) => {
 });
 
 // 🎰 [🎰 উইনগো কালার ট্রেড ওরিজিনাল ডোমেইন সিঙ্ক]
-const MAIN_SITE_URL = "https://onrender.com"; 
+const MAIN_SITE_URL = "https://betlover247.onrender.com"; 
 
 // ৩টি সুষম রিংয়ের মাল্টিপ্লায়ার ডেটা ম্যাট্রিক্স চাবি ভাই ভাই
 const innerPool = [1.55, 4.85, 7.7, 10];
