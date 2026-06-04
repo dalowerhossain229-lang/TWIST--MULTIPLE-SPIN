@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>COMBO TWIST - 2-LAYER MULTIPLIER</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* 🎨 স্পীড অপ্টিমাইজড কোর সিএসএস ফ্রেম ইনজেকশন ভাই ভাই */
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #05070c; font-family: 'Segoe UI', Roboto, sans-serif; color: #fff; -webkit-tap-highlight-color: transparent; user-select: none; }
+        .header { display: none !important; } /* ডাবল ব্যালেন্স বক্স জ্যাম ব্লকার */
+        
+        body { 
+            background: radial-gradient(circle at center, #0f1424 0%, #05070c 100%); 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            height: 100vh; 
+        }
+
+        /* 🎡 ওপরের ২-লেয়ার জাদুকরী হুইল কন্টেইনার এরিয়া */
+        .twist-wheel-outer-box {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 25px auto 10px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+        /* 🎯 ওপরের ওরিজিনাল লাল তীরের সূচক ডগা সূচক নোড */
+        .wheel-top-pointer-arrow {
+            position: absolute;
+            top: -16px;
+            z-index: 30;
+            color: #ef4444;
+            font-size: 28px;
+            text-shadow: 0 0 12px rgba(239, 68, 68, 0.7);
+            pointer-events: none;
+        }
+
+        /* 🎡 [২-লেয়ার কম্বো হুইল প্লেট রিং বর্ম ওস্তাদ ভাই ভাই] */
+        .wheel-layer-ring {
+            border-radius: 50%;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.7), inset 0 0 20px rgba(0,0,0,0.85);
+            overflow: hidden;
+            transform: rotate(0deg);
+        }
+
+        /* ২ লেয়ারের নিখুঁত ইন্টারন্যাশনাল ডায়ামিটার রেশিও লক */
+        .ring-layer-outer { width: 100%; height: 100%; background: #111622; border: 5px solid #1e293b; z-index: 5; }
+        .ring-layer-inner { width: 56%; height: 56%; background: #070a0f; border: 4px solid #ffbb00; z-index: 15; }
+
+        /* 🔥 চাকার ঠিক মাঝখানে থাকা ওরিজিনাল ফায়ার হাব ক্যাপ নোড */
+        .wheel-center-fire-hub {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle at center, #ffaa00 0%, #d97706 60%, #000 100%);
+            border-radius: 50%;
+            z-index: 25;
+            border: 2px solid #ffffff;
+            box-shadow: 0 0 15px #ffaa00;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 20px;
+            pointer-events: none;
+        }
+
+        /* 📊 লাইভ কম্বো ইনফো ডিসপ্লে প্যানেল (২টি সংখ্যা গুন হওয়ার ম্যাট্রিক্স লুক!) */
+        .combo-multiplier-display-box {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            max-width: 450px;
+            margin: 0 auto;
+            width: calc(100% - 24px);
+            background: rgba(13, 18, 30, 0.6);
+            border: 1px solid rgba(255,255,255,0.02);
+            padding: 8px 0;
+            border-radius: 12px;
+            z-index: 10;
+        }
+        .combo-node-val { font-size: 15px; font-weight: 900; background: #141b2d; padding: 4px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+        .val-outer { color: #38bdf8; border-color: #38bdf8; }
+        .val-inner { color: #ffbb00; border-color: #ffbb00; }
+        .val-total { color: #22c55e; border-color: #22c55e; font-size: 18px; }
+
+        /* 📢 লাইভ মেসেজ প্যানেল বার */
+        .win-status-container { position: relative; z-index: 10; text-align: center; padding: 10px; margin: 5px 12px; background: rgba(9, 12, 18, 0.6); border-radius: 10px; border: 1px solid rgba(255,255,255,0.02); }
+        #win-text-msg { font-size: 11px; font-weight: 700; color: #38bdf8; letter-spacing: 0.3px; }
+
+        /* 🎛️ নিচের মেইন গেম কন্ট্রোল প্যানেল ফুটার */
+        .footer-controls { position: relative; z-index: 50; background: #07090e; border-top: 1px solid #161b29; padding: 10px 15px 25px 15px; box-shadow: 0 -5px 20px rgba(0,0,0,0.6); }
+        .play-section { display: flex; justify-content: space-between; align-items: center; gap: 10px; max-width: 450px; margin: 0 auto; }
+        .bet-btn-nav { background: #111522; border: 1px solid #20293d; color: #ffaa00; font-size: 18px; font-weight: 800; width: 40px; height: 40px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .play-btn { flex: 1; background: linear-gradient(180deg, #ffbb00 0%, #d48800 100%); color: #000; font-size: 15px; font-weight: 900; border: none; padding: 11px 0; border-radius: 10px; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 10px rgba(212,136,0,0.3); }
+        .play-btn:disabled { background: #141721 !important; border-color: #1f2536 !important; color: #4b5563 !important; box-shadow: none !important; cursor: not-allowed; }
+        .icon-btn { background: #111522; border: 1px solid #20293d; width: 40px; height: 40px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #ffaa00; font-weight: bold; }
+        .icon-btn.active { background: #ffaa00; color: #000; box-shadow: 0 0 10px rgba(255,170,0,0.4); }
+
+        .win-glow-bar { border-color: rgba(0, 255, 136, 0.4) !important; background: rgba(0, 255, 136, 0.05) !important; }
+        .win-glow-bar #win-text-msg { color: #00ff88 !important; }
+        .lose-glow-bar { border-color: rgba(255, 51, 102, 0.4) !important; background: rgba(255, 51, 102, 0.05) !important; }
+        .lose-glow-bar #win-text-msg { color: #ff3366 !important; }
+    </style>
+</head>
+<body>
+
+    <div class="header" style="display:none !important;">
+        <div class="balance-box">৳ <span id="user-balance">0.00</span></div>
+    </div>
+
+    <!-- 🎡 ওপরের ২-লেয়ার জাদুকরী হুইল কন্টেইনার এরিয়া -->
+    <div class="twist-wheel-outer-box">
+        <div class="wheel-top-pointer-arrow">▼</div>
+        
+        <!-- ওরিজিনাল ২টি কনিকাল স্লাইস বাউন্সার লেয়ার রিং (পিওর কোড রেন্ডার ওস্তাদ) -->
+        <div class="wheel-layer-ring ring-layer-outer" id="wheel-ring-layer-1"></div>
+        <div class="wheel-layer-ring ring-layer-inner" id="wheel-ring-layer-2"></div>
+        
+        <div class="wheel-center-fire-hub">🔥</div>
+    </div>
+
+    <!-- 📊 লাইভ কম্বো ইনফো ডিসপ্লে প্যানেল বার -->
+    <div class="combo-multiplier-display-box">
+        <div class="combo-node-val val-outer" id="combo-out-txt">OUTER: --</div>
+        <div style="font-size:18px; font-weight:900; color:#aaa;">✕</div>
+        <div class="combo-node-val val-inner" id="combo-in-txt">INNER: --</div>
+        <div style="font-size:18px; font-weight:900; color:#aaa;">=</div>
+        <div class="combo-node-val val-total" id="combo-total-txt">TOTAL: --</div>
+    </div>
+
+    <!-- 📢 উইন-লস লাইভ ক্যাসিনো মেসেজ প্যানেল বার -->
+    <div class="win-status-container" id="win-status-box">
+        <span id="win-text-msg">বাজির পরিমাণ সেট করে SPIN বোতাম চাপুন ভাই ভাই!</span>
+    </div>
+
+    <!-- 🎛️ অ্যাকশন কন্ট্রোল ফুটার প্যানেল বার -->
+    <div class="footer-controls">
+        <div class="play-section">
+            <button class="bet-btn-nav" onclick="adjustBet('minus')">-</button>
+            <div style="text-align: center; width: 60px;">
+                <div style="font-size: 9px; color: #aaa; font-weight: bold;">BET</div>
+                <div style="font-size: 15px; font-weight: 900; color: #fff;" id="bet-display">৳50</div>
+            </div>
+            <button class="bet-btn-nav" onclick="adjustBet('plus')">+</button>
+
+            <button class="play-btn" id="spin-btn" onclick="handleComboTwistRoll()">SPIN</button>
+            
+            <div class="icon-group">
+                <button class="icon-btn" id="auto-btn" onclick="toggleAuto()">🤖</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlUserId = urlParams.get('userId') || urlParams.get('id') || urlParams.get('username') || "guest_user";
+        const urlWallet = urlParams.get('wallet') || "main";
+        const SERVER_URL = window.location.origin;
+
+        let balance = 0.00;
+        let currentBet = 50;
+        let isSpinning = false;
+        let isAuto = false;
+        let isMuted = false;
+        let autoInterval = null;
+
+        // 🎰 আপনার দেওয়া সংখ্যাগুলোর ওরিজিনাল ১০-স্লট প্রফেশনাল সিকোয়েন্স ম্যাপিং ভাই ভাই!
+        const comboRingSlicesPool = ["200X", "100X", "50X", "10X", "7X", "5X", "3X", "2X", "0X", "0X"];
+
+        // 🛠️ [মেগা পিউর সিএসএস ২-লেয়ার রেন্ডারিং ইঞ্জিন]: ১০ স্লটের ক্যানভাস এলাইনমেন্ট বর্ম
+        function generatePureCSSComboRings() {
+            renderSingleRingSlices("wheel-ring-layer-1", comboRingSlicesPool, ["#7f1d1d", "#1e293b", "#3b0764", "#4c1d95", "#2e1065", "#0f172a", "#1c1917", "#451a03", "#ef4444", "#dc2626"], 14);
+            renderSingleRingSlices("wheel-ring-layer-2", comboRingSlicesPool, ["#d97706", "#065f46", "#3b0764", "#047857", "#b45309", "#78350f", "#064e3b", "#7c2d12", "#ef4444", "#dc2626"], 10);
+        }
+function renderSingleRingSlices(containerId, valuesArray, colorsPool, topPadding) {
+            const containerNode = document.getElementById(containerId);
+            if (!containerNode) return;
+            containerNode.innerHTML = "";
+            
+            let totalSlices = valuesArray.length;
+            let sliceAngle = 360 / totalSlices;
+            let sliceWidthPercentage = Math.tan((sliceAngle * Math.PI) / 360) * 100;
+
+            valuesArray.forEach((val, index) => {
+                const slice = document.createElement("div");
+                slice.style.position = "absolute";
+                slice.style.top = "0";
+                slice.style.left = "50%";
+                slice.style.width = (sliceWidthPercentage * 2) + "%";
+                slice.style.height = "50%";
+                slice.style.transformOrigin = "50% 100%";
+                
+                let currentRot = index * sliceAngle;
+                slice.style.transform = `translateX(-50%) rotate(${currentRot}deg)`;
+                slice.style.background = colorsPool[index % colorsPool.length];
+                slice.style.clipPath = `polygon(50% 100%, 0% 0%, 100% 0%)`;
+
+                let numberCounterRotateAngle = -currentRot;
+
+                slice.innerHTML = `
+                    <div style="
+                        position: absolute; 
+                        top: ${topPadding}px; 
+                        left: 50%; 
+                        transform: translateX(-50%) rotate(${numberCounterRotateAngle}deg); 
+                        font-size: 10px; 
+                        font-weight: 900; 
+                        color: #ffffff; 
+                        text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+                        font-family: Arial, sans-serif;
+                        width: 45px; 
+                        text-align: center;
+                    ">
+                        ${val}
+                    </div>
+                `;
+                containerNode.appendChild(slice);
+            });
+        }
+
+        function adjustBet(action) {
+            if (isSpinning) return;
+            if (action === 'minus' && currentBet > 50) currentBet -= 50;
+            if (action === 'plus' && currentBet < 20000) currentBet += 50;
+            document.getElementById("bet-display").innerText = `৳${currentBet}`;
+            playAudio('click');
+        }
+
+        // 🎰 [🎰 ২-লেয়ার হুইল স্বাধীন ও কাউন্টার রোটেশন এনিমেশন ইঞ্জিন ভাই ভাই]
+        function animateTwoLayersComboSpinning(serverGameData) {
+            const r1 = document.getElementById("wheel-ring-layer-1");
+            const r2 = document.getElementById("wheel-ring-layer-2");
+
+            let deg1 = serverGameData.ring1TargetDegree || 0;
+            let deg2 = serverGameData.ring2TargetDegree || 0;
+
+            // ১০ স্লাইসের মিলিমিটার নিখুঁত তীরের ডগা এলাইনমেন্ট অফসেট ১৮ ডিগ্রী লক
+            let alignmentCorrectionOffset = 18;
+
+            if (r1) { r1.style.transition = "transform 3.5s cubic-bezier(0.1, 0.8, 0.1, 1)"; r1.style.transform = `rotate(${1440 + (360 - deg1) - alignmentCorrectionOffset}deg)`; }
+            if (r2) { r2.style.transition = "transform 3.9s cubic-bezier(0.1, 0.7, 0.1, 1)"; r2.style.transform = `rotate(${1800 + deg2 + alignmentCorrectionOffset}deg)`; } 
+            
+            playAudio('spin');
+
+            setTimeout(() => {
+                if (r1) { r1.style.transition = "none"; r1.style.transform = `rotate(${360 - deg1 - alignmentCorrectionOffset}deg)`; }
+                if (r2) { r2.style.transition = "none"; r2.style.transform = `rotate(${deg2 + alignmentCorrectionOffset}deg)`; }
+
+                // লাইভ ড্যাশবোর্ডে গুনফলের ওরিজিনাল ডেটা পুশ
+                document.getElementById("combo-out-txt").innerText = `OUTER: ${serverGameData.val1}`;
+                document.getElementById("combo-in-txt").innerText = `INNER: ${serverGameData.val2}`;
+                document.getElementById("combo-total-txt").innerText = `TOTAL: ${serverGameData.hitMultiplierText}`;
+
+                if (serverGameData.balance !== undefined) {
+                    balance = parseFloat(serverGameData.balance);
+                }
+                showFinalComboReward(serverGameData.status, serverGameData.winAmount, serverGameData.hitMultiplierText);
+            }, 3950);
+        }
+
+        async function handleComboTwistRoll() {
+            if (isSpinning || isSpinning === true) return; 
+
+            isSpinning = true;
+            if (document.getElementById("spin-btn")) document.getElementById("spin-btn").disabled = true;
+            if (document.getElementById("win-status-box")) document.getElementById("win-status-box").className = "win-status-container";
+            if (document.getElementById("win-text-msg")) document.getElementById("win-text-msg").innerText = "🎰 ২-লেয়ার কম্বো হুইল ঘুরছে, গুণফল গণনার অপেক্ষা ওস্তাদ...";
+            
+            document.getElementById("combo-out-txt").innerText = "OUTER: --";
+            document.getElementById("combo-in-txt").innerText = "INNER: --";
+            document.getElementById("combo-total-txt").innerText = "TOTAL: --";
+            playAudio('click');
+
+            try {
+                const response = await fetch(`${SERVER_URL}/api/twist-deal`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: urlUserId, amount: parseFloat(currentBet), wallet: urlWallet, prediction: "COMBO_MODE"
+                    })
+                });
+
+                const serverRes = await response.json();
+                
+                if (serverRes.success || serverRes.success === true) {
+                    let parsedLiveBalance = serverRes.balance || serverRes.data?.balance || balance;
+                    balance = parseFloat(parsedLiveBalance);
+                    
+                    let targetGamePayload = serverRes.gameData || serverRes;
+                    animateTwoLayersComboSpinning(targetGamePayload);
+                } else {
+                    alert(serverRes.message || "❌ Insufficient Balance! Please Recharge Wallet.");
+                    stopComboState();
+                }
+            } catch (err) {
+                stopComboState();
+            }
+        }
+
+        function showFinalComboReward(status, winAmount, hitMultiplierText) {
+            const msgBox = document.getElementById("win-status-box");
+            const textMsg = document.getElementById("win-text-msg");
+            
+            if (status === "win" && hitMultiplierText !== "0X") {
+                playAudio('win');
+                if (msgBox) msgBox.className = "win-status-container win-glow-bar";
+                if (textMsg) textMsg.innerHTML = `🎉 গ্র্যান্ড উইন ওস্তাদ! ২ লেয়ারের গুণফল মিলে <b>${hitMultiplierText}</b> হিট হয়েছে এবং ওয়ালেটে ৳${winAmount} ক্রেডিট হয়েছে ভাই ভাই!`;
+            } else {
+                playAudio('wheel');
+                if (msgBox) msgBox.className = "win-status-container lose-glow-bar";
+                if (textMsg) textMsg.innerHTML = `💥 ওহ হো লস ওস্তাদ! গুণফল <b>${hitMultiplierText}</b> পড়েছে। আবার অন ফায়ার কদম ফেলুন ভাই ভাই!`;
+            }
+
+            if (typeof balance !== 'undefined' && !isNaN(balance)) {
+                if (document.getElementById("user-balance")) {
+                    document.getElementById("user-balance").innerText = balance.toFixed(2);
+                }
+            }
+
+            setTimeout(() => { fetchLiveBalance(); }, 1500);
+            stopComboState();
+
+            if (isAuto) {
+                autoInterval = setTimeout(() => {
+                    if (isAuto) handleComboTwistRoll();
+                }, 3500);
+            }
+        }
+
+        if (typeof io !== 'undefined') {
+            const socket = io();
+            socket.on("balanceUpdate", (data) => {
+                if (data && data.username === urlUserId) {
+                    if (data.balance !== undefined) {
+                        balance = parseFloat(data.balance);
+                        if (document.getElementById("user-balance")) {
+                            document.getElementById("user-balance").innerText = balance.toFixed(2);
+                        }
+                    }
+                    if (window.parent) window.parent.postMessage({ action: "refresh_wallet" }, "*");
+                }
+            });
+        }
+
+        async function fetchLiveBalance() {
+            try {
+                const response = await fetch(`${SERVER_URL}/api/twist-balance?userId=${urlUserId}&wallet=${urlWallet}`);
+                const serverData = await response.json();
+                if (serverData.success || serverData.balance !== undefined) {
+                    balance = parseFloat(serverData.balance);
+                    if (document.getElementById("user-balance")) {
+                        document.getElementById("user-balance").innerText = balance.toFixed(2);
+                    }
+                }
+            } catch (e) { console.error("Balance synchronization stream check pass"); }
+        }
+
+        window.onload = () => {
+            if (window.parent) window.parent.postMessage({ action: "refresh_wallet" }, "*");
+            generatePureCSSComboRings(); 
+            fetchLiveBalance();
+        };
+
+        function toggleAuto() {
+            isAuto = !isAuto;
+            const autoEl = document.getElementById("auto-btn");
+            if (autoEl) autoEl.classList.toggle('active', isAuto);
+            if (isAuto && !isSpinning) handleComboTwistRoll();
+            playAudio('click');
+        }
+
+        function stopComboState() {
+            isSpinning = false;
+            if (document.getElementById("spin-btn")) document.getElementById("spin-btn").disabled = false;
+            if (!isAuto && autoInterval) clearTimeout(autoInterval);
+        }
+
+               const slotSounds = {
+            click: new Audio('spin2.mp3'), spin: new Audio('spin2.mp3'),
+            win: new Audio('win2.mp3'), wheel: new Audio('spin2.mp3')
+        };
+        Object.values(slotSounds).forEach(s => s.load());
+
+        function playAudio(type) {
+            try { slotSounds[type].currentTime = 0; slotSounds[type].play(); } catch(e) {}
+        }
+    </script>
+</body>
+</html>
+ 
+        
