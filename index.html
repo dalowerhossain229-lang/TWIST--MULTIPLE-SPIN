@@ -176,11 +176,12 @@
         let isAuto = false;
         let isMuted = false;
         let autoInterval = null;
+        // আন্তর্জাতিক ৯৫% আরটিপি লস স্লট সিকোয়েন্স ম্যাপিং লক ওস্তাদ ভাই ভাই!
+        const ring1Values = ["200X", "3.9X", "27.5X", "52X", "85X", "0X"];
+        const ring2Values = ["24X", "12.5X", "52X", "2.5X", "16X", "0X"];
+        const ring3Values = ["10X", "1.55X", "4.85X", "2.5X", "7.7X", "0X"];
 
-        // আন্তর্জাতিক ৯৫% আরটিপি সিকোয়েন্স ম্যাপিং লক ওস্তাদ!
-        const ring1Values = ["200X", "3.9X", "27.5X", "52X", "85X", "133X"];
-        const ring2Values = ["24X", "12.5X", "52X", "2.5X", "16X", "16X"];
-        const ring3Values = ["10X", "1.55X", "4.85X", "2.5X", "7.7X", "24X"];
+        
         // 🛠️ [মেগা পিউর সিএসএস ৩-লেয়ার রেন্ডারিং ইঞ্জিন]: পেজ লোড হতেই ৩টি ক্যানভাস রিং আলাদা স্লটে জেনারেট লক ভাই ভাই
         function generatePureCSSTwistRings() {
             renderSingleRingSlices("wheel-ring-layer-1", ring1Values, ["#7f1d1d", "#1e293b", "#3b0764", "#4c1d95", "#2e1065", "#0f172a"]);
